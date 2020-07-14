@@ -1,5 +1,6 @@
 package com.algaworks.sistemausuarios;
 
+import com.algaworks.sistemausuarios.model.Dominio;
 import com.algaworks.sistemausuarios.model.Usuario;
 
 import javax.persistence.*;
@@ -13,13 +14,22 @@ public class ConsultasComJPQL {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Usuarios-PU");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
 
-        primeirasConsultas(entityManager);
+        //primeirasConsultas(entityManager);
+        escolhendoRetorno(entityManager);
 
 
         entityManager.close();
         entityManagerFactory.close();
     }
 
+    public static void escolhendoRetorno(EntityManager entityManager){
+        String jpql = "SELECT u.dominio FROM Usuario u WHERE u.id = 1";
+        TypedQuery<Dominio> typedQuery = entityManager.createQuery(jpql, Dominio.class);
+        Dominio dominio = typedQuery.getSingleResult();
+        System.out.println(dominio.getId() + ", " + dominio.getNome());
+    }
+
+    //Consultas simples
     public static void primeirasConsultas(EntityManager entityManager){
 
         //PESQUISA POR TODOS USUÁRIOS

@@ -12,9 +12,9 @@ public class Dominio {
     private Integer id;
 
     private String nome;
-/*
+
     @OneToMany(mappedBy = "dominio")
-    private List<Usuario> usuarios;*/
+    private List<Usuario> usuarios;
 
     public Integer getId() {
         return id;
@@ -31,14 +31,14 @@ public class Dominio {
     public void setNome(String nome) {
         this.nome = nome;
     }
-/*
+
     public List<Usuario> getUsuarios() {
         return usuarios;
     }
 
     public void setUsuarios(List<Usuario> usuarios) {
         this.usuarios = usuarios;
-    }*/
+    }
 
     @Override
     public boolean equals(Object o) {

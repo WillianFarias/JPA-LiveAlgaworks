@@ -16,9 +16,9 @@ public class Usuario {
     private String nome;
 
     private LocalDateTime ultimoAcesso;
-/*
+
     @ManyToOne
-    private Dominio dominio;*/
+    private Dominio dominio;
 //
 //    @OneToOne(mappedBy = "usuario")
 //    private Configuracao configuracao;
@@ -62,14 +62,14 @@ public class Usuario {
     public void setNome(String nome) {
         this.nome = nome;
     }
-/*
+
     public Dominio getDominio() {
         return dominio;
     }
 
     public void setDominio(Dominio dominio) {
         this.dominio = dominio;
-    }*/
+    }
 
 //    public Configuracao getConfiguracao() {
 //        return configuracao;

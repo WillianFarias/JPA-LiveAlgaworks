@@ -6,9 +6,7 @@ import com.algaworks.sistemausuarios.model.Dominio;
 import com.algaworks.sistemausuarios.model.Usuario;
 
 import javax.persistence.*;
-import java.security.DomainCombiner;
 import java.util.List;
-import java.util.SplittableRandom;
 
 public class ConsultasComJPQL {
 
@@ -23,22 +21,41 @@ public class ConsultasComJPQL {
         //fazendoProjecoes(entityManager);
         //passandoParametros(entityManager);
         //fazendoJoins(entityManager);
-        fazendoLeftJoins(entityManager);
+        //fazendoLeftJoins(entityManager);
+        carregamentoComJoinFetch(entityManager);
 
 
         entityManager.close();
         entityManagerFactory.close();
     }
 
+    //
+    public static void carregamentoComJoinFetch(EntityManager entityManager){
+        //retorna todos os usuarios, nao levando em consideracao se eles possuem configuracao ou dominio por exemplo
+        //String jpql = "SELECT u FROM Usuario u";
+        //utilizando o JOIN FETCH é feita apenas a consulta que realmente é passada no jpql
+        //é feita quando eu realmente preciso do dominio e da configuracao, ou seja só me retorna os usuarios
+        //que possuem ambas
+        String jpql = "SELECT u FROM Usuario u JOIN FETCH u.configuracao c JOIN FETCH u.dominio d";
+        TypedQuery<Usuario> typedQuery = entityManager.createQuery(jpql, Usuario.class);
+        List<Usuario> list = typedQuery.getResultList();
+        //Maps id é o mesmo do usuario, por isso ele faz a mesma requisicao de configuracao varias vezes por ser null
+        list.forEach(u -> System.out.println(u.getId() + ", " + u.getNome() + ", " + u.getDominio().getNome()));
+    }
+
     //Joins
     public static void fazendoLeftJoins(EntityManager entityManager){
         //sera retornado uma lista, indice 0 usuario e indice 1 configuracao
         //Tras todos os usuarios que possuem correspondencia na tabela configuracao e os que tbm nao possuem
+        //Projecao
         String jpql = "SELECT u, c FROM Usuario u left join u.configuracao c";
         TypedQuery<Object[]> typedQuery = entityManager.createQuery(jpql, Object[].class);
         List<Object[]> list = typedQuery.getResultList();
 
         list.forEach(arr -> {
+            //arr[0] usuario
+            //arr[1] configuracao
+
             String out = ((Usuario) arr[0]).getNome();
             if (arr[1] == null){
                 out += ", NULL";
@@ -56,7 +73,7 @@ public class ConsultasComJPQL {
         list.forEach(u -> System.out.println(u.getId() + ", " + u.getNome()));
     }
 
-
+    //Projecoes
     public static void passandoParametros(EntityManager entityManager){
         String jpql = "SELECT u FROM Usuario u WHERE u.id = :idUsuario";
         TypedQuery<Usuario> typedQuery = entityManager.createQuery(jpql, Usuario.class);

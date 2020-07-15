@@ -31,8 +31,8 @@ public class ConsultasComJPQL {
         //filtrandoRegistros(entityManager);
         //utilizandoOperadoresLogicos(entityManager);
         //utilizandoOperadorIn(entityManager);
-        ordenandoResultados(entityManager);
-        //paginandoResultados(entityManager);
+        //ordenandoResultados(entityManager);
+        paginandoResultados(entityManager);
 
 
         entityManager.close();
@@ -41,6 +41,21 @@ public class ConsultasComJPQL {
 
     //Paginacao
     public static void paginandoResultados(EntityManager entityManager){
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Usuario> criteriaQuery = criteriaBuilder.createQuery(Usuario.class);
+        Root<Usuario> root = criteriaQuery.from(Usuario.class);
+
+        criteriaQuery.select(root);
+
+        TypedQuery<Usuario> typedQuery = entityManager.createQuery(criteriaQuery)
+                .setMaxResults(2)
+                .setFirstResult(4); //PRIMEIRO = (PAGINA - 1) * QTDE_PAG
+        List<Usuario> lista = typedQuery.getResultList();
+        lista.forEach(u -> System.out.println(u.getId() + ", " + u.getNome()));
+
+        /*
         String jpql = "SELECT u FROM Usuario u";
         TypedQuery<Usuario> typedQuery = entityManager.createQuery(jpql, Usuario.class)
                 //De onde voc vai começar a buscar seus resultados
@@ -48,7 +63,7 @@ public class ConsultasComJPQL {
                 //Máximo de resultado por página que sera exibido
                 .setMaxResults(2);
         List<Usuario> list = typedQuery.getResultList();
-        list.forEach(u -> System.out.println(u.getId() + ", " + u.getNome() + ", " + u.getDominio().getNome()));
+        list.forEach(u -> System.out.println(u.getId() + ", " + u.getNome() + ", " + u.getDominio().getNome()));*/
     }
 
 

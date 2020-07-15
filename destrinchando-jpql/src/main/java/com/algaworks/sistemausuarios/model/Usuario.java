@@ -19,9 +19,9 @@ public class Usuario {
 
     @ManyToOne
     private Dominio dominio;
-//
-//    @OneToOne(mappedBy = "usuario")
-//    private Configuracao configuracao;
+
+    @OneToOne(mappedBy = "usuario")
+    private Configuracao configuracao;
 
     public Integer getId() {
         return id;
@@ -71,13 +71,13 @@ public class Usuario {
         this.dominio = dominio;
     }
 
-//    public Configuracao getConfiguracao() {
-//        return configuracao;
-//    }
-//
-//    public void setConfiguracao(Configuracao configuracao) {
-//        this.configuracao = configuracao;
-//    }
+    public Configuracao getConfiguracao() {
+        return configuracao;
+    }
+
+    public void setConfiguracao(Configuracao configuracao) {
+        this.configuracao = configuracao;
+    }
 
     @Override
     public boolean equals(Object o) {

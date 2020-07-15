@@ -1,11 +1,14 @@
 package com.algaworks.sistemausuarios;
 
 import com.algaworks.sistemausuarios.dto.UsuarioDTO;
+import com.algaworks.sistemausuarios.model.Configuracao;
 import com.algaworks.sistemausuarios.model.Dominio;
 import com.algaworks.sistemausuarios.model.Usuario;
 
 import javax.persistence.*;
+import java.security.DomainCombiner;
 import java.util.List;
+import java.util.SplittableRandom;
 
 public class ConsultasComJPQL {
 
@@ -18,12 +21,41 @@ public class ConsultasComJPQL {
         //primeirasConsultas(entityManager);
         //escolhendoRetorno(entityManager);
         //fazendoProjecoes(entityManager);
-        passandoParametros(entityManager);
+        //passandoParametros(entityManager);
+        //fazendoJoins(entityManager);
+        fazendoLeftJoins(entityManager);
 
 
         entityManager.close();
         entityManagerFactory.close();
     }
+
+    //Joins
+    public static void fazendoLeftJoins(EntityManager entityManager){
+        //sera retornado uma lista, indice 0 usuario e indice 1 configuracao
+        //Tras todos os usuarios que possuem correspondencia na tabela configuracao e os que tbm nao possuem
+        String jpql = "SELECT u, c FROM Usuario u left join u.configuracao c";
+        TypedQuery<Object[]> typedQuery = entityManager.createQuery(jpql, Object[].class);
+        List<Object[]> list = typedQuery.getResultList();
+
+        list.forEach(arr -> {
+            String out = ((Usuario) arr[0]).getNome();
+            if (arr[1] == null){
+                out += ", NULL";
+            }else{
+                out += ", " + ((Configuracao) arr[1]).getId();
+            }
+            System.out.println(out);
+        });
+    }
+
+    public static void fazendoJoins(EntityManager entityManager){
+        String jpql = "SELECT u FROM Usuario u join u.dominio d WHERE d.id = 1";
+        TypedQuery<Usuario> typedQuery = entityManager.createQuery(jpql, Usuario.class);
+        List<Usuario> list = typedQuery.getResultList();
+        list.forEach(u -> System.out.println(u.getId() + ", " + u.getNome()));
+    }
+
 
     public static void passandoParametros(EntityManager entityManager){
         String jpql = "SELECT u FROM Usuario u WHERE u.id = :idUsuario";
@@ -32,6 +64,7 @@ public class ConsultasComJPQL {
         typedQuery.setParameter("idUsuario", 1);
         Usuario usuario = typedQuery.getSingleResult();
         System.out.println(usuario.getId() + ", " + usuario.getNome());
+
 
         String jpqlLog = "SELECT u FROM Usuario u WHERE u.login = :loginUsuario";
         TypedQuery<Usuario> typedQueryLogin = entityManager.
@@ -61,6 +94,7 @@ public class ConsultasComJPQL {
         Dominio dominio = typedQuery.getSingleResult();
         System.out.println(dominio.getId() + ", " + dominio.getNome());
 
+
         //Retornando um tipo primitivo ao inves de um Objeto
         String jpqlNome = "SELECT u.nome FROM Usuario u";
         TypedQuery<String> typedQueryNome = entityManager.createQuery(jpqlNome, String.class);
@@ -81,11 +115,13 @@ public class ConsultasComJPQL {
         List<Usuario> lista = typedQuery.getResultList();
         lista.forEach(u -> System.out.println(u.getId() + ", " + u.getNome()));
 
+
         //CONSUTAR POR USUÁRIO ESPECIFICO
         String jpqlSing = "SELECT u FROM Usuario u WHERE u.id = 1";
         TypedQuery<Usuario> typedQuerySingle = entityManager.createQuery(jpqlSing, Usuario.class);
         Usuario usuario = typedQuerySingle.getSingleResult();
         System.out.println(usuario.getId() + ", " + usuario.getNome());
+
 
         //CONSUTAR POR USUÁRIO ESPECIFICO UTILIZANDO APENAS QUERY
         String jpqlSingCast = "SELECT u FROM Usuario u WHERE u.id = 2";

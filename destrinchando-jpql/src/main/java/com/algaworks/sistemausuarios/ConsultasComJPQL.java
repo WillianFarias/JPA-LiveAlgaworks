@@ -6,6 +6,9 @@ import com.algaworks.sistemausuarios.model.Dominio;
 import com.algaworks.sistemausuarios.model.Usuario;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +21,7 @@ public class ConsultasComJPQL {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Usuarios-PU");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
 
-        //primeirasConsultas(entityManager);
+        primeirasConsultas(entityManager);
         //escolhendoRetorno(entityManager);
         //fazendoProjecoes(entityManager);
         //passandoParametros(entityManager);
@@ -29,7 +32,7 @@ public class ConsultasComJPQL {
         //utilizandoOperadoresLogicos(entityManager);
         //utilizandoOperadorIn(entityManager);
         //ordenandoResultados(entityManager);
-        paginandoResultados(entityManager);
+        //paginandoResultados(entityManager);
 
 
         entityManager.close();
@@ -189,7 +192,21 @@ public class ConsultasComJPQL {
 
     //Consultas simples
     public static void primeirasConsultas(EntityManager entityManager){
+        //entidades raizes para poder montar a consulta
+        //utilizado maioria das vezes no FROM, WHERE, filtros, ordenacoes
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        //possui metodos equivalentes a clausulas SQL, select etc
+        CriteriaQuery<Usuario> criteriaQuery = criteriaBuilder.createQuery(Usuario.class);
+        //Equivalente ao apelido em SQL
+        Root<Usuario> root = criteriaQuery.from(Usuario.class);
+        criteriaQuery.select(root);
 
+        TypedQuery<Usuario> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Usuario> lista = typedQuery.getResultList();
+        lista.forEach(u -> System.out.println(u.getId() + ", " + u.getNome()));
+
+
+        /*
         //PESQUISA POR TODOS USUÁRIOS
         String jpql = "SELECT u FROM Usuario u";
         //Query tipada
@@ -211,6 +228,6 @@ public class ConsultasComJPQL {
         String jpqlSingCast = "SELECT u FROM Usuario u WHERE u.id = 2";
         Query querySingle = entityManager.createQuery(jpqlSingCast);
         Usuario usuario2 = (Usuario) querySingle.getSingleResult();
-        System.out.println(usuario2.getId() + ", " + usuario2.getNome());
+        System.out.println(usuario2.getId() + ", " + usuario2.getNome());*/
     }
 }

@@ -24,14 +24,14 @@ public class ConsultasComJPQL {
         //primeirasConsultas(entityManager);
         //escolhendoRetorno(entityManager);
         //fazendoProjecoes(entityManager);
-        passandoParametros(entityManager);
+        //passandoParametros(entityManager);
         //fazendoJoins(entityManager);
         //fazendoLeftJoins(entityManager);
         //carregamentoComJoinFetch(entityManager);
         //filtrandoRegistros(entityManager);
         //utilizandoOperadoresLogicos(entityManager);
         //utilizandoOperadorIn(entityManager);
-        //ordenandoResultados(entityManager);
+        ordenandoResultados(entityManager);
         //paginandoResultados(entityManager);
 
 
@@ -54,10 +54,23 @@ public class ConsultasComJPQL {
 
     //Ordenacao ORDER BY
     public static void ordenandoResultados(EntityManager entityManager){
-        String jpql = "SELECT u FROM Usuario u ORDER BY u.nome";
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Usuario> criteriaQuery = criteriaBuilder.createQuery(Usuario.class);
+        Root<Usuario> root = criteriaQuery.from(Usuario.class);
+
+        criteriaQuery.select(root);
+        criteriaQuery.orderBy(criteriaBuilder.asc(root.get("nome")));
+
+        TypedQuery<Usuario> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Usuario> lista = typedQuery.getResultList();
+        lista.forEach(u -> System.out.println(u.getId() + ", " + u.getNome()));
+
+        /*String jpql = "SELECT u FROM Usuario u ORDER BY u.nome";
         TypedQuery<Usuario> typedQuery = entityManager.createQuery(jpql, Usuario.class);
         List<Usuario> list = typedQuery.getResultList();
-        list.forEach(u -> System.out.println(u.getId() + ", " + u.getNome() + ", " + u.getDominio().getNome()));
+        list.forEach(u -> System.out.println(u.getId() + ", " + u.getNome() + ", " + u.getDominio().getNome()));*/
     }
 
     public static void utilizandoOperadorIn(EntityManager entityManager){
@@ -152,7 +165,7 @@ public class ConsultasComJPQL {
         Root<Usuario> root = criteriaQuery.from(Usuario.class);
 
         criteriaQuery.select(root);
-        criteriaQuery.where(criteriaBuilder.equal(root.get("id"), 1));
+        criteriaQuery.where(criteriaBuilder.equal(root.get("login"), "ria"));
 
         TypedQuery<Usuario> typedQuery = entityManager.createQuery(criteriaQuery);
         Usuario usuario = typedQuery.getSingleResult();

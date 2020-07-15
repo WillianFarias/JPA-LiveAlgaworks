@@ -6,6 +6,8 @@ import com.algaworks.sistemausuarios.model.Dominio;
 import com.algaworks.sistemausuarios.model.Usuario;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 public class ConsultasComJPQL {
@@ -22,14 +24,79 @@ public class ConsultasComJPQL {
         //passandoParametros(entityManager);
         //fazendoJoins(entityManager);
         //fazendoLeftJoins(entityManager);
-        carregamentoComJoinFetch(entityManager);
+        //carregamentoComJoinFetch(entityManager);
+        //filtrandoRegistros(entityManager);
+        //utilizandoOperadoresLogicos(entityManager);
+        //utilizandoOperadorIn(entityManager);
+        //ordenandoResultados(entityManager);
+        paginandoResultados(entityManager);
 
 
         entityManager.close();
         entityManagerFactory.close();
     }
 
-    //
+    //Paginacao
+    public static void paginandoResultados(EntityManager entityManager){
+        String jpql = "SELECT u FROM Usuario u";
+        TypedQuery<Usuario> typedQuery = entityManager.createQuery(jpql, Usuario.class)
+                //De onde voc vai começar a buscar seus resultados
+                .setFirstResult(0)
+                //Máximo de resultado por página que sera exibido
+                .setMaxResults(2);
+        List<Usuario> list = typedQuery.getResultList();
+        list.forEach(u -> System.out.println(u.getId() + ", " + u.getNome() + ", " + u.getDominio().getNome()));
+    }
+
+
+    //Ordenacao ORDER BY
+    public static void ordenandoResultados(EntityManager entityManager){
+        String jpql = "SELECT u FROM Usuario u ORDER BY u.nome";
+        TypedQuery<Usuario> typedQuery = entityManager.createQuery(jpql, Usuario.class);
+        List<Usuario> list = typedQuery.getResultList();
+        list.forEach(u -> System.out.println(u.getId() + ", " + u.getNome() + ", " + u.getDominio().getNome()));
+    }
+
+    public static void utilizandoOperadorIn(EntityManager entityManager){
+        //esta contido
+        String jpql = "SELECT u FROM Usuario u WHERE u.id in (:ids)";
+        TypedQuery<Usuario> typedQuery = entityManager.createQuery(jpql, Usuario.class)
+                .setParameter("ids", Arrays.asList(1, 2));
+        List<Usuario> list = typedQuery.getResultList();
+        list.forEach(u -> System.out.println(u.getId() + ", " + u.getNome()));
+    }
+
+    public static void utilizandoOperadoresLogicos(EntityManager entityManager){
+        //&&=and ||=or
+        String jpql = "SELECT u FROM Usuario u WHERE " +
+                "u.ultimoAcesso > :ontem and u.ultimoAcesso < :hoje" +
+                "or u.ultimoAcesso";
+        TypedQuery<Usuario> typedQuery = entityManager.createQuery(jpql, Usuario.class)
+                .setParameter("ontem", LocalDateTime.now().minusDays(1))
+                .setParameter("hoje", LocalDateTime.now());
+        List<Usuario> list = typedQuery.getResultList();
+        list.forEach(u -> System.out.println(u.getId() + " ," + u.getNome()));
+    }
+
+    public static void filtrandoRegistros(EntityManager entityManager){
+        //LIKE, IS NULL, IS EMPTY, BETWEEN, >, <, >=, <=, <>
+
+        // LIKE = select u from Usuario u where u.nome like concat(:nomeUsuario, '%')
+        // IS NULL = select u from Usuario u where u.senha is null
+        // IS EMPTY = select d from Dominio d where d.usuarios is empty
+        //String jpql = "SELECT u FROM Usuario u WHERE u.nome like :nomeUsuario)";
+        //.setParameter("nomeUsuario", "Cal%");
+
+        String jpql = "SELECT u FROM Usuario u WHERE u.ultimoAcesso between :ontem and :hoje";
+        TypedQuery<Usuario> typedQuery = entityManager.createQuery(jpql, Usuario.class)
+                .setParameter("ontem", LocalDateTime.now().minusDays(1))
+                .setParameter("hoje", LocalDateTime.now());
+        List<Usuario> list = typedQuery.getResultList();
+        list.forEach(u -> System.out.println(u.getId() + ", " + u.getNome() + ", " + u.getDominio().getNome()));
+    }
+
+
+    //Join Fetch
     public static void carregamentoComJoinFetch(EntityManager entityManager){
         //retorna todos os usuarios, nao levando em consideracao se eles possuem configuracao ou dominio por exemplo
         //String jpql = "SELECT u FROM Usuario u";

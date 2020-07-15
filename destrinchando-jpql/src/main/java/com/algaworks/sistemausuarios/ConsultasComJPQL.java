@@ -23,8 +23,8 @@ public class ConsultasComJPQL {
 
         //primeirasConsultas(entityManager);
         //escolhendoRetorno(entityManager);
-        fazendoProjecoes(entityManager);
-        //passandoParametros(entityManager);
+        //fazendoProjecoes(entityManager);
+        passandoParametros(entityManager);
         //fazendoJoins(entityManager);
         //fazendoLeftJoins(entityManager);
         //carregamentoComJoinFetch(entityManager);
@@ -145,6 +145,21 @@ public class ConsultasComJPQL {
 
     //Projecoes
     public static void passandoParametros(EntityManager entityManager){
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Usuario> criteriaQuery = criteriaBuilder.createQuery(Usuario.class);
+        Root<Usuario> root = criteriaQuery.from(Usuario.class);
+
+        criteriaQuery.select(root);
+        criteriaQuery.where(criteriaBuilder.equal(root.get("id"), 1));
+
+        TypedQuery<Usuario> typedQuery = entityManager.createQuery(criteriaQuery);
+        Usuario usuario = typedQuery.getSingleResult();
+        System.out.println(usuario.getId() + ", " + usuario.getNome());
+
+
+        /*
         String jpql = "SELECT u FROM Usuario u WHERE u.id = :idUsuario";
         TypedQuery<Usuario> typedQuery = entityManager.createQuery(jpql, Usuario.class);
         //id do usuario que eu quero buscar "idUsuario"
@@ -159,6 +174,7 @@ public class ConsultasComJPQL {
                 .setParameter("loginUsuario", "ria");
         Usuario usuarioLog = typedQueryLogin.getSingleResult();
         System.out.println(usuarioLog.getId() + ", " + usuarioLog.getNome());
+        */
     }
 
     public static void fazendoProjecoes(EntityManager entityManager){

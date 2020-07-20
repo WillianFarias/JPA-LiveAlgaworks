@@ -9,6 +9,9 @@ public class Funcionario {
     @Id
     private Integer id;
 
+    //toda vez que funcionário for atualizado versao será incrementado em 1
+    //toda vez que for feita qlquer mudança em funcionário será verificado este campo, para só depois ser atualizado
+    //caso tudo estiver o.k
     @Version
     private Integer versao;
 

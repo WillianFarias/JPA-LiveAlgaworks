@@ -11,9 +11,12 @@ public class LockOtimista {
     private static final Integer CALL_LIGHTMAN_ID = 1;
 
     public static void main(String[] args) {
+
+        //Iniciando factory
         EntityManagerFactory entityManagerFactory = Persistence
                 .createEntityManagerFactory("Funcionarios-PU");
 
+        //Buscando funcionário da base
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         Funcionario funcionario = entityManager.find(Funcionario.class, CALL_LIGHTMAN_ID);
         entityManager.close();
@@ -30,6 +33,7 @@ public class LockOtimista {
         sessao2.editarNome();
         sessao2.submeterFormulario();
 
+        //ambos os usuários estao atualizando o mesmo registro
         sessao1.atualizarTelaParaVerificarNome();
         sessao2.atualizarTelaParaVerificarNome();
 

@@ -93,6 +93,8 @@ public class LockPessimista {
         entityManager1.getTransaction().begin();
         Artigo artigo1 = entityManager1.find(
                 Artigo.class, ID, LockModeType.PESSIMISTIC_WRITE);
+        //LockModeType.PESSIMISTIC_WRITE nao deixa ninguem ler
+        //LockModeType.PESSIMISTIC_READ qlquer outra transacao pode pesquisar, mas nao pode comitar
         artigo1.setConteudo("Alteração do João");
         entityManager1.getTransaction().commit();
 
